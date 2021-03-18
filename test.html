@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const plays = {
+        hamlet: {
+          name: "halet",
+          type: "tragedy",
+        },
+        asLike: {
+          name: "as you Like it",
+          type: "comedy",
+        },
+        othello: {
+          name: "Othello",
+          type: "tragedy",
+        },
+      };
+
+      const inovoies = {
+        customer: "BigCo",
+        performances: [
+          {
+            playId: "hamlet",
+            audience: 55,
+          },
+          {
+            playId: "as-like",
+            audience: 35,
+          },
+          {
+            playId: "Othello",
+            audience: 40,
+          },
+        ],
+      };
+
+      function statement(invoice, plays) {
+        let totalAmount = 0;
+        let volumeCredits = 0;
+        let result = `청구내역 (고객명 : ${invoice.customer})`;
+        const format = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+        }).format;
+        function playFor(aPerformance) {
+          return plays[aPerformance.playId];
+        }
+        for (let aPerformance of invoice.performances) {
+          // const play = playFor(aPerformance);
+          console.log(aPerformance);
+
+          console.log(playFor(aPerformance));
+          let thisAmount = amountFor(aPerformance, playFor(aPerformance));
+
+          //포인트를 적립한다.
+          volumeCredits += Math.max(aPerformance.audience - 30, 0);
+          if ("comedy" === play.type)
+            volumeCredits += Math.floor(aPerformance.audience / 5);
+          //청구 내역을 출력한다.
+          result += `${play.name}:${format(thisAmount / 100)} (${
+            aPerformance.audience
+          }석)\n`;
+          totalAmount += thisAmount;
+        }
+        result += `총액 : ${format(totalAmount / 100)}\n`;
+        result += `적립 포인트 : ${volumeCredits}\n`;
+        return result;
+      }
+
+      function amountFor(aPerformance, play) {
+        console.log(aPerformance);
+        console.log(play);
+
+        let result = 0;
+        switch (play.type) {
+          case "tragedy":
+            thisAmount = 40000;
+            if (aPerformance.audience > 30) {
+              thisAmount += 1000 * (aPerformance.audience - 30);
+            }
+            break;
+          case "comedy":
+            thisAmount = 30000;
+            if (aPerformance.audience > 20) {
+              thisAmount += 10000 + 500 * (aPerformance.audience - 20);
+            }
+            break;
+          default:
+            throw new Error(`알 수 없는 경로:${play.type}`);
+            break;
+        }
+      }
+      const res = statement(inovoies, plays);
+      console.log(res);
+    </script>
+  </body>
+</html>
